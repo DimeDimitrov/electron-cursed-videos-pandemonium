@@ -3,6 +3,9 @@ const path = require("path");
 const fs = require("fs");
 const configPath = "./config.json";
 
+// Remove top bar with 'Files' 'Edit' etc.
+Menu.setApplicationMenu(null);
+
 // Get data from config
 let config = {};
 
@@ -31,15 +34,19 @@ function convertToEmbedUrl(url) {
   return `https://www.youtube.com/embed/${videoId}`;
 }
 
-// Check if url is from youtube and convert to embed
-const embedUrls = videos.map((url) => convertToEmbedUrl(url));
+let currentIndex = 0; // Track the current index of the video to be played
 
-// Opening a new window
 function getRandomVideo() {
-  const randomIndex = Math.floor(Math.random() * videos.length);
-  return embedUrls[randomIndex];
+  if (videos.length === 0) {
+    return null; // No more videos available
+  }
+
+  const video = videos[currentIndex];
+  currentIndex = (currentIndex + 1) % videos.length; // Increment the index, wrapping around to the beginning if necessary
+  return convertToEmbedUrl(video);
 }
 
+// Opening a new window
 let mainWindow;
 let tray;
 
@@ -136,6 +143,8 @@ ipcMain.on("open-windows", (event, count) => {
 
     childWindow.webContents.on("did-finish-load", () => {
       const video = getRandomVideo();
+
+      // Embed the iframe into the child window
       childWindow.webContents.executeJavaScript(`
       
         const iframe = document.createElement('iframe');
