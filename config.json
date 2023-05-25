@@ -2,8 +2,9 @@
   "videos": [
     "https://www.youtube.com/watch?v=ybS7AHGoEI8",
     "https://www.youtube.com/watch?v=2VXacYLcjGA",
-    "https://www.youtube.com/watch?v=_nQU_8Nm0Yk"
+    "https://www.youtube.com/watch?v=_nQU_8Nm0Yk",
+    "https://www.youtube.com/watch?v=Gnm3hIcjiCQ"
   ],
-  "volume": 0.2,
-  "quality": "small"
+  "volume": 1,
+  "quality": "medium"
 }
