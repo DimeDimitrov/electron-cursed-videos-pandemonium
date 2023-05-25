@@ -1,21 +1,24 @@
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const path = require("path");
+const fs = require("fs");
+const configPath = "./config.json";
 
-const videoIds = [
-  "ybS7AHGoEI8",
-  "2VXacYLcjGA",
-  "_nQU_8Nm0Yk",
-  "T8r3cWM4JII",
-  "V7HdWeYbV3Q",
-];
+let config = {};
 
-const volume = 0.2;
-const quality = "small"; // OOptions are hd1080, hd720, medium, small
-const playbackSpeed = 1.5;
+try {
+  const configData = fs.readFileSync(configPath);
+  config = JSON.parse(configData);
+} catch (error) {
+  console.error(`Error reading configuration file: ${error}`);
+}
 
-function getRandomVideoId() {
-  const randomIndex = Math.floor(Math.random() * videoIds.length);
-  return videoIds[randomIndex];
+const videoIds = config.videoIds || [];
+const volume = config.volume || 0.5;
+const quality = config.quality || "small";
+
+function getRandomVideo() {
+  const randomIndex = Math.floor(Math.random() * videos.length);
+  return videos[randomIndex];
 }
 
 let mainWindow;
@@ -72,11 +75,11 @@ ipcMain.on("open-windows", (event, count) => {
     childWindow.loadFile(path.join(__dirname, "./src/child.html"));
 
     childWindow.webContents.on("did-finish-load", () => {
-      const videoId = getRandomVideoId();
+      const video = getRandomVideo();
       childWindow.webContents.executeJavaScript(`
       
         const iframe = document.createElement('iframe');
-        iframe.src = 'https://www.youtube.com/embed/${videoId}?vq=${quality}';
+        iframe.src = '${video}?vq=${quality}';
         iframe.style.width = '100%';
         iframe.style.height = '100%';
         iframe.style.position = 'absolute';
@@ -89,12 +92,6 @@ ipcMain.on("open-windows", (event, count) => {
         document.body.style.margin = '0';
         document.body.style.overflow = 'hidden';
         document.body.appendChild(iframe);
-        iframe.onload = function() {
-          const player = iframe.contentWindow.document.querySelector('video');
-          if (player) {
-            player.playbackRate = ${playbackSpeed};
-          }
-        };
       `);
     });
 
