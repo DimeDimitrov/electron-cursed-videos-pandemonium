@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const configPath = "./config.json";
 
+// Get data from config
 let config = {};
 
 try {
@@ -12,17 +13,36 @@ try {
   console.error(`Error reading configuration file: ${error}`);
 }
 
-const videoIds = config.videoIds || [];
+// Default parameters for config if no config found
+const videos = config.videos || [];
 const volume = config.volume || 0.5;
 const quality = config.quality || "small";
 
+// Check if url is from youtube
+function isYouTubeUrl(url) {
+  return url.includes("youtube.com") || url.includes("youtu.be");
+}
+// Convert YouTube url to and embed (Any other sources must be an embed)
+function convertToEmbedUrl(url) {
+  if (!isYouTubeUrl(url)) {
+    return url; // Return the original URL if it's not from YouTube
+  }
+  const videoId = url.split("v=")[1];
+  return `https://www.youtube.com/embed/${videoId}`;
+}
+
+// Check if url is from youtube and convert to embed
+const embedUrls = videos.map((url) => convertToEmbedUrl(url));
+
+// Opening a new window
 function getRandomVideo() {
   const randomIndex = Math.floor(Math.random() * videos.length);
-  return videos[randomIndex];
+  return embedUrls[randomIndex];
 }
 
 let mainWindow;
 
+// Remove the top frame of the window
 Menu.setApplicationMenu(null);
 
 function createWindow() {
@@ -58,6 +78,7 @@ app.on("activate", () => {
   }
 });
 
+// Create child windows based on count from index.html
 ipcMain.on("open-windows", (event, count) => {
   for (let i = 0; i < count; i++) {
     let childWindow = new BrowserWindow({
@@ -94,7 +115,6 @@ ipcMain.on("open-windows", (event, count) => {
         document.body.appendChild(iframe);
       `);
     });
-
     childWindow.on("closed", () => {
       childWindow = null;
     });
