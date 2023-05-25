@@ -66,6 +66,7 @@ ipcMain.on("open-windows", (event, count) => {
         contextIsolation: true,
         preload: path.join(__dirname, "preload.js"),
       },
+      titleBarStyle: "hiddenInset",
     });
 
     childWindow.loadFile(path.join(__dirname, "child.html"));
