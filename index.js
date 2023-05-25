@@ -30,11 +30,11 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "./renderer/preload.js"),
     },
   });
 
-  mainWindow.loadFile(path.join(__dirname, "index.html"));
+  mainWindow.loadFile(path.join(__dirname, "./src/index.html"));
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -64,12 +64,12 @@ ipcMain.on("open-windows", (event, count) => {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
-        preload: path.join(__dirname, "preload.js"),
+        preload: path.join(__dirname, "./renderer/preload.js"),
       },
       titleBarStyle: "hiddenInset",
     });
 
-    childWindow.loadFile(path.join(__dirname, "child.html"));
+    childWindow.loadFile(path.join(__dirname, "./src/child.html"));
 
     childWindow.webContents.on("did-finish-load", () => {
       const videoId = getRandomVideoId();
