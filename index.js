@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu, Tray } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const configPath = "./config.json";
@@ -41,9 +41,9 @@ function getRandomVideo() {
 }
 
 let mainWindow;
+let tray;
 
 // Remove the top frame of the window
-Menu.setApplicationMenu(null);
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -62,7 +62,43 @@ function createWindow() {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
+
+  // Create tray icon
+  tray = new Tray(path.join(__dirname, "./icon.ico"));
+
+  // Create context menu for the tray icon
+  const trayMenu = Menu.buildFromTemplate([
+    {
+      label: "Minimize",
+      click: () => {
+        mainWindow.minimize(); // Minimize the main window
+      },
+    },
+    {
+      label: "Quit",
+      click: () => {
+        app.quit(); // Quit the application
+      },
+    },
+  ]);
+
+  // Set the context menu for the tray icon
+  tray.setContextMenu(trayMenu);
+
+  // Show/hide the main window when clicking the tray icon
+  tray.on("click", () => {
+    if (mainWindow.isVisible()) {
+      mainWindow.hide();
+    } else {
+      mainWindow.show();
+    }
+  });
 }
+
+// Handle the "minimize-to-tray" event from the renderer process
+ipcMain.on("minimize-to-tray", () => {
+  mainWindow.hide();
+});
 
 app.on("ready", createWindow);
 
@@ -77,6 +113,9 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+// Declare an array to store references to child windows
+let childWindows = [];
 
 // Create child windows based on count from index.html
 ipcMain.on("open-windows", (event, count) => {
@@ -116,7 +155,15 @@ ipcMain.on("open-windows", (event, count) => {
       `);
     });
     childWindow.on("closed", () => {
+      childWindows = childWindows.filter((win) => win !== childWindow);
       childWindow = null;
     });
+    childWindows.push(childWindow);
   }
+  // Close all child windows when the main window is closed
+  mainWindow.on("closed", () => {
+    for (let i = 0; i < childWindows.length; i++) {
+      childWindows[i].close();
+    }
+  });
 });
