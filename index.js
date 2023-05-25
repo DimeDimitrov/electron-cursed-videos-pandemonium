@@ -149,17 +149,10 @@ ipcMain.on("open-windows", (event, count) => {
       
         const iframe = document.createElement('iframe');
         iframe.src = '${video}?vq=${quality}';
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.style.position = 'absolute';
-        iframe.style.top = '0';
-        iframe.style.left = '0';
         iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
         iframe.allowFullscreen = true;
         iframe.frameborder = 0;
         iframe.volume = ${volume}
-        document.body.style.margin = '0';
-        document.body.style.overflow = 'hidden';
         document.body.appendChild(iframe);
       `);
     });
