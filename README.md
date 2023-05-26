@@ -1,3 +1,4 @@
+# [Deprecated] New lightweight alternative [here](https://github.com/DimeDimitrov/cursed-videos-pandemonium)
 # Cursed Videos Pandemonium
 
 Cursed Videos Pandemonium is a simple application built with Electron that lets you open a specified number of cursed videos in different windows simultaneously. It provides a fun and chaotic experience for those who enjoy the weird and unsettling side of internet content.
