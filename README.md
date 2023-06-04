@@ -1,4 +1,5 @@
 # [Deprecated] New lightweight alternative [here](https://github.com/DimeDimitrov/cursed-videos-pandemonium)
+
 # Cursed Videos Pandemonium
 
 Cursed Videos Pandemonium is a simple application built with Electron that lets you open a specified number of cursed videos in different windows simultaneously. It provides a fun and chaotic experience for those who enjoy the weird and unsettling side of internet content.
@@ -34,7 +35,7 @@ To run the Cursed Videos Pandemonium application locally, make sure you have the
 
 1. Clone this repository to your local machine:
  ```shell
-  git clone https://github.com/your-username/cursed-videos-pandemonium.git
+  git clone https://github.com/DimeDimitrov/electron-cursed-videos-pandemonium.git
  ```
 2. Navigate to the project's root directory:
   ```shell
